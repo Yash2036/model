@@ -12,46 +12,110 @@
         <!-- Form submission to the server-side prediction endpoint -->
         <form action="/predict" method="post">
             <div class="form-section">
-                <h2>Screening Questions (1 for Yes, 0 for No)</h2>
-                <!-- Screening Questions Input -->
-                <label for="A1_Score">A1 Score:</label>
-                <input type="number" id="A1_Score" name="A1_Score" min="0" max="1" required>
-                
-                <label for="A2_Score">A2 Score:</label>
-                <input type="number" id="A2_Score" name="A2_Score" min="0" max="1" required>
+                <h2>Screening Questions (Yes or No)</h2>
+                <!-- Screening Questions Input with Dropdowns -->
+                <label for="A1_Score">Does the child respond when you call their name?</label>
+                <select id="A1_Score" name="A1_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A2_Score">Does the child point to indicate that they want something?</label>
+                <select id="A2_Score" name="A2_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
 
                 <!-- Repeat similarly for A3_Score to A10_Score -->
-                <label for="A10_Score">A10 Score:</label>
-                <input type="number" id="A10_Score" name="A10_Score" min="0" max="1" required>
+                <label for="A3_Score">Does the child follow where you're looking?</label>
+                <select id="A3_Score" name="A3_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A4_Score">Does the child play pretend or imaginative games?</label>
+                <select id="A4_Score" name="A4_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A5_Score">Does the child imitate the actions of others?</label>
+                <select id="A5_Score" name="A5_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A6_Score">Does the child respond to emotions by observing others?</label>
+                <select id="A6_Score" name="A6_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A7_Score">Does the child initiate social interaction on their own?</label>
+                <select id="A7_Score" name="A7_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A8_Score">Does the child maintain consistent eye contact with others?</label>
+                <select id="A8_Score" name="A8_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A9_Score">Does the child react to new objects or people?</label>
+                <select id="A9_Score" name="A9_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+
+                <label for="A10_Score">Does the child prefer social activities over being alone?</label>
+                <select id="A10_Score" name="A10_Score" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
             </div>
 
             <div class="form-section">
                 <h2>Demographic Information</h2>
+                <!-- Age with default value -->
                 <label for="age">Age:</label>
-                <input type="number" id="age" name="age" required>
+                <input type="number" id="age" name="age" min="0" max="18" value="0" required>
 
+                <!-- Gender with radio buttons -->
                 <label for="gender">Gender:</label>
-                <select id="gender" name="gender" required>
-                    <option value="m">Male</option>
-                    <option value="f">Female</option>
+                <div>
+                    <input type="radio" id="gender_m" name="gender" value="m" checked>
+                    <label for="gender_m">Male</label>
+                    <input type="radio" id="gender_f" name="gender" value="f">
+                    <label for="gender_f">Female</label>
+                </div>
+
+                <!-- Ethnicity dropdown with sample options -->
+                <label for="ethnicity">Ethnicity:</label>
+                <select id="ethnicity" name="ethnicity" required>
+                    <option value="White-European">White-European</option>
+                    <option value="Latino">Latino</option>
+                    <option value="Others">Others</option>
+                    <!-- Add more ethnicity options as needed -->
                 </select>
 
-                <label for="ethnicity">Ethnicity:</label>
-                <input type="text" id="ethnicity" name="ethnicity" required>
-
-                <label for="jaundice">Jaundice (yes or no):</label>
+                <!-- Jaundice with yes/no dropdown -->
+                <label for="jaundice">Did the child have jaundice at birth?</label>
                 <select id="jaundice" name="jaundice" required>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                 </select>
                 
-                <label for="austim">Family history of ASD (yes or no):</label>
+                <!-- Family history of ASD with yes/no dropdown -->
+                <label for="austim">Is there a family history of Autism Spectrum Disorder (ASD)?</label>
                 <select id="austim" name="austim" required>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                 </select>
             </div>
 
+            <!-- Submit button -->
             <button type="submit">Predict</button>
         </form>
 
