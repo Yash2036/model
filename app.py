@@ -1,26 +1,43 @@
-from flask import Flask, request, render_template, jsonify
-import joblib
+from flask import Flask, render_template, request
+import pickle
 import numpy as np
 
 app = Flask(__name__)
 
-# Load the trained model
-model = joblib.load("model.pkl")
+# Load the trained model and encoders
+with open('best_model.pkl', 'rb') as f:
+    model = pickle.load(f)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-@app.route("/predict", methods=["POST"])
+@app.route('/predict', methods=['POST'])
 def predict():
-    # Get features from the form
-    try:
-        features = [float(x) for x in request.form.values()]
-        features = np.array([features])
-        prediction = model.predict(features)[0]
-        return render_template("index.html", prediction_text=f"Prediction: {prediction}")
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    # Get form data
+    input_data = [
+        int(request.form['A1_Score']),
+        int(request.form['A2_Score']),
+        int(request.form['A3_Score']),
+        int(request.form['A4_Score']),
+        int(request.form['A5_Score']),
+        int(request.form['A6_Score']),
+        int(request.form['A7_Score']),
+        int(request.form['A8_Score']),
+        int(request.form['A9_Score']),
+        int(request.form['A10_Score']),
+        int(request.form['age']),
+        1 if request.form['gender'] == 'm' else 0,  # Gender encoding
+        request.form['ethnicity'],
+        1 if request.form['jaundice'] == 'yes' else 0,
+        1 if request.form['austim'] == 'yes' else 0
+    ]
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    # Prediction logic (adjust according to the model's input expectations)
+    prediction = model.predict([input_data])[0]
+    
+    # Render the result back to the user
+    return render_template('index.html', prediction=prediction)
+
+if __name__ == '__main__':
+    app.run(debug=True)
