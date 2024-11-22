@@ -1,42 +1,7 @@
-from flask import Flask, render_template, request
-import pickle
-from sklearn.preprocessing import LabelEncoder
-import numpy as np
-
-app = Flask(__name__)
-
-# Load your pre-trained model
-with open('model.pkl', 'rb') as model_file:
-    model = pickle.load(model_file)
-
-# Function to preprocess categorical data
-def preprocess_input(input_data):
-    # Encoding categorical features: Gender and Ethnicity
-    categorical_features = ['gender', 'ethnicity']
-    
-    # Example categories based on the dataset you provided
-    # This should be consistent with how your model was trained
-    categories = {
-        'gender': ['Male', 'Female'],
-        'ethnicity': ['Caucasian', 'African American', 'Asian', 'Hispanic', 'Other', 'White-European']
-    }
-    
-    # Convert categorical data to numerical using LabelEncoder
-    for feature in categorical_features:
-        encoder = LabelEncoder()
-        encoder.fit(categories[feature])
-        input_data[feature] = encoder.transform([input_data[feature]])[0]
-    
-    return input_data
-
-@app.route('/')
-def home():
-    return render_template('index.html')
-
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Collect the form data
     try:
+        # Collect the form data
         input_data = {
             'A1_Score': int(request.form['A1_Score']),
             'A2_Score': int(request.form['A2_Score']),
@@ -50,22 +15,33 @@ def predict():
             'gender': request.form['gender'],
             'ethnicity': request.form['ethnicity']
         }
-    except KeyError as e:
-        return f"Missing input data: {str(e)}", 400
+        
+        # Debugging: Print input data to logs
+        print("Received Input Data:", input_data)
+        
+        # Validate the scores
+        validate_scores(input_data)
+        
+        # Preprocess the input data
+        input_data = preprocess_input(input_data)
+        print("Preprocessed Input Data:", input_data)
 
-    # Preprocess the input data (convert categorical to numerical)
-    input_data = preprocess_input(input_data)
+        # Prepare data for prediction
+        input_features = [input_data[key] for key in input_data]
+        
+        # Perform the prediction
+        prediction = model.predict([input_features])[0]
+        
+        # Debugging: Print prediction result to logs
+        print("Prediction Result:", prediction)
+        
+    except (KeyError, ValueError) as e:
+        print(f"Error processing input data: {str(e)}")  # Log the error
+        return f"Invalid input data: {str(e)}", 400
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")  # Log unexpected errors
+        return "Internal Server Error", 500
 
-    # Prepare data for prediction
-    input_features = [input_data[key] for key in input_data]
-
-    # Perform the prediction
-    prediction = model.predict([input_features])[0]
-    
     # Return the result
     result = 'Autism' if prediction == 1 else 'No Autism'
     return render_template('result.html', prediction=result)
-
-if __name__ == '__main__':
-    # Bind to 0.0.0.0 for deployment so it's not restricted to localhost
-    app.run(host='0.0.0.0', port=5000)
