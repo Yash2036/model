@@ -13,7 +13,6 @@ encoder = joblib.load('encoders.pkl')  # Load the encoder
 def home():
     return render_template('index.html')
 
-# Route for handling prediction
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -49,9 +48,9 @@ def predict():
         return render_template('result.html', prediction=prediction)
 
     except Exception as e:
-        # Log the error and return a user-friendly message
+        # Log the detailed error
         print(f"Error: {e}")
-        return "An error occurred while processing your request. Please try again."
+        return f"An error occurred while processing your request: {e}"
 
 # Function to preprocess input data using the encoder
 def preprocess_input(input_data):
