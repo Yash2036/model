@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Load the trained model and encoder
 model = joblib.load('model.pkl')
-encoder = joblib.load('encoder.pkl')  # Load the encoder
+encoder = joblib.load('encoders.pkl')  # Load the encoder
 
 # Home route to render the main HTML page
 @app.route('/')
