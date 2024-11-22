@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 # Initialize Flask app
 app = Flask(__name__)
 
-# Load the trained model
+# Load the trained model 
 with open('model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 
@@ -32,7 +32,7 @@ def preprocess_input(input_data):
         input_data['ethnicity_encoded'] = encoders['ethnicity'].transform([input_data['ethnicity']])[0]
 
         # Ensure all other numeric fields are integers (0 or 1)
-        for key in [f'A{i}_Score' for i in range(1, 10)]:
+        for key in [f'A{i}_Score' for i in range(1, 11)]:  # Include A10_Score
             input_data[key] = int(input_data[key])
             if input_data[key] not in [0, 1]:
                 raise ValueError(f"Invalid score value for {key}. Expected 0 or 1.")
@@ -49,7 +49,8 @@ def preprocess_input(input_data):
             input_data['A6_Score'],
             input_data['A7_Score'],
             input_data['A8_Score'],
-            input_data['A9_Score']
+            input_data['A9_Score'],
+            input_data['A10_Score']
         ]
 
     except ValueError as e:
@@ -70,16 +71,9 @@ def predict():
         input_data = {
             'gender': request.form.get('gender', None),
             'ethnicity': request.form.get('ethnicity', None),
-            'A1_Score': request.form.get('A1_Score', None),
-            'A2_Score': request.form.get('A2_Score', None),
-            'A3_Score': request.form.get('A3_Score', None),
-            'A4_Score': request.form.get('A4_Score', None),
-            'A5_Score': request.form.get('A5_Score', None),
-            'A6_Score': request.form.get('A6_Score', None),
-            'A7_Score': request.form.get('A7_Score', None),
-            'A8_Score': request.form.get('A8_Score', None),
-            'A9_Score': request.form.get('A9_Score', None)
         }
+        for i in range(1, 11):
+            input_data[f'A{i}_Score'] = request.form.get(f'A{i}_Score', None)
 
         # Validate that all fields are present
         if None in input_data.values():
