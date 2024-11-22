@@ -1,7 +1,6 @@
 import os
 import pickle
 import numpy as np
-import pandas as pd
 from flask import Flask, request, render_template
 from sklearn.ensemble import RandomForestClassifier
 
@@ -69,18 +68,22 @@ def predict():
     try:
         # Collect form data
         input_data = {
-            'gender': request.form['gender'],
-            'ethnicity': request.form['ethnicity'],
-            'A1_Score': request.form['A1_Score'],
-            'A2_Score': request.form['A2_Score'],
-            'A3_Score': request.form['A3_Score'],
-            'A4_Score': request.form['A4_Score'],
-            'A5_Score': request.form['A5_Score'],
-            'A6_Score': request.form['A6_Score'],
-            'A7_Score': request.form['A7_Score'],
-            'A8_Score': request.form['A8_Score'],
-            'A9_Score': request.form['A9_Score']
+            'gender': request.form.get('gender', None),
+            'ethnicity': request.form.get('ethnicity', None),
+            'A1_Score': request.form.get('A1_Score', None),
+            'A2_Score': request.form.get('A2_Score', None),
+            'A3_Score': request.form.get('A3_Score', None),
+            'A4_Score': request.form.get('A4_Score', None),
+            'A5_Score': request.form.get('A5_Score', None),
+            'A6_Score': request.form.get('A6_Score', None),
+            'A7_Score': request.form.get('A7_Score', None),
+            'A8_Score': request.form.get('A8_Score', None),
+            'A9_Score': request.form.get('A9_Score', None)
         }
+
+        # Validate that all fields are present
+        if None in input_data.values():
+            raise ValueError("All input fields are required.")
 
         # Preprocess the input
         processed_input = preprocess_input(input_data)
@@ -94,6 +97,7 @@ def predict():
     except Exception as e:
         # Handle any exceptions and display an error message
         error_message = f"An error occurred while processing your request: {e}"
+        print(error_message)  # This will print the error to the console for debugging
         return render_template('index.html', prediction_text=error_message)
 
 # Run the app
